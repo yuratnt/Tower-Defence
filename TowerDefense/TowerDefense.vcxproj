@@ -71,7 +71,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>C:\Users\u0259\source\repos\TowerDefense\SDL3-3.4.4\include;$(IncludePath)</IncludePath>
+    <IncludePath>C:\Users\u0259\source\repos\TowerDefense\SDL3-3.4.4\include;C:\Users\u0259\source\repos\TowerDefense\SDL3_image-devel-3.4.2-VC\SDL3_image-3.4.2\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -109,8 +109,8 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\Users\u0259\source\repos\TowerDefense\SDL3-3.4.4\lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>SDL3.lib;SDL3_test.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\Users\u0259\source\repos\TowerDefense\SDL3-3.4.4\lib\x64;C:\Users\u0259\source\repos\TowerDefense\SDL3_image-devel-3.4.2-VC\SDL3_image-3.4.2\lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>SDL3.lib;SDL3_test.lib;SDL3_image.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
