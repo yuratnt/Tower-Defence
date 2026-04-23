@@ -11,29 +11,59 @@ static SDL_Renderer* renderer;
 class TextureObj {
 protected:
 	SDL_FRect rect;
+	SDL_FRect* path;
 	SDL_Texture* texture;
 public:
-	TextureObj(SDL_FRect _rect, SDL_Texture* _texture) {
+	TextureObj(
+		SDL_FRect _rect, 
+		SDL_FRect _path,
+		SDL_Texture* _texture
+	) {
 		rect = _rect;
+		path = &_path;
 		texture = _texture;
 	}
 
-	virtual void render(SDL_Renderer* renderer, SDL_FRect path) {
-		SDL_RenderTexture(renderer, texture, &path, &rect);
+	TextureObj(
+		SDL_FRect _rect,
+		SDL_Texture* _texture
+	) {
+		rect = _rect;
+		path = nullptr;
+		texture = _texture;
+	}
+
+
+	virtual void render(SDL_Renderer* renderer) {
+		SDL_RenderTexture(renderer, texture, path, &rect);
 	}
 };
 
-class Button : TextureObj {
+class Button : public TextureObj {
 private:
 	void (*function)();
 public:
 	Button(
 		SDL_FRect _rect,
-		SDL_Texture* _texture, 
+		SDL_Texture* _texture,
 		void (*_function)()
-		) : TextureObj(_rect, _texture) 
+	) : TextureObj(_rect, _texture)
 	{
 		rect = _rect;
+		path = nullptr;
+		texture = _texture;
+		function = _function;
+	}
+
+	Button(
+		SDL_FRect _rect,
+		SDL_FRect _path,
+		SDL_Texture* _texture,
+		void (*_function)()
+		) : TextureObj(_rect, _path, _texture)
+	{
+		rect = _rect;
+		path = &_path;
 		texture = _texture;
 		function = _function;
 	}
@@ -49,20 +79,11 @@ public:
 		if (!inRect(x, y)) return;
 		function();
 	}
+
 };
 
 class Menu {
 protected:
-	/*
-	SDL_Texture* background;
-	SDL_Renderer* renderer;
-	SDL_FRect backgroundRect;
-	SDL_Texture* test;
-	SDL_FRect testRect;
-	SDL_FRect startButton;
-	SDL_FRect saveButton;
-	SDL_FRect exitButton;
-	*/
 	TextureObj* interface;
 	Button* button;
 	int buttonCount;
@@ -77,79 +98,21 @@ public:
 		buttonCount = _buttonCount;
 	}
 
-	void render() {
-		//SDL_RenderTexture(renderer, background, NULL, &backgroundRect);
-	}
-
-
-/*
-	Menu(SDL_Renderer* _renderer) {
-		status = 1;
-		renderer = _renderer;
-		background = IMG_LoadTexture(renderer, "assets\\menu\\background.png");
-		// тестовая текстура
-		test = IMG_LoadTexture(renderer, "test.png");
-		testRect = { 50, 50, 300, 300 };
-
-		// ректы
-		backgroundRect = { 0, 0, 1000, 800 };
-
-		startButton = { 413, 354, 178, 30 };
-		saveButton = { 413, 410, 178, 33 };
-		exitButton = { 413, 470, 178, 30 };
-	}
-
-public:
-	void menuBackground() {
-		SDL_RenderTexture(renderer, background, NULL, &backgroundRect);
-	}
-
-private:
-	void startGame() {
-		SDL_RenderTexture(renderer, test, NULL, &testRect);
-		SDL_SetRenderDrawColor(renderer, 0, 255, 255, 0);
-		SDL_RenderRect(renderer, &startButton);
-		SDL_RenderRect(renderer, &saveButton);
-		SDL_RenderRect(renderer, &exitButton);
-	}
-
-public:
-	SDL_AppResult menuButton(int x, int y) {
-		if (inRect(x, y, exitButton)) return SDL_APP_SUCCESS;
-
-		return SDL_APP_CONTINUE;
-	}
-
-	void renderMenu() {
-
-		switch (status) {
-		case 1:
-			menuBackground();
-			break;
-		case 2:
-			menuBackground();
-			startGame();
-			break;
-		case 3:
-			menuBackground();
-			break;
-
+	void render(SDL_Renderer* renderer) {
+		interface->render(renderer);
+		for (int i = 0; i < buttonCount; i++) {
+			button[i].render(renderer);
 		}
-
 	}
-
-	void setStatus(int _status) {
-		if (0 < _status > 10) return;
-		status = _status;
-	}
-	*/
 };
 
-class MainMenu : Menu {
+class Window {
 
 };
 
-Menu* menu;
+TextureObj* background;
+Menu* mainMenu;
+
 
 SDL_AppResult SDL_AppInit(void** appstate, int argc, char* argv[]) {
 	SDL_Init(SDL_INIT_AUDIO);
@@ -162,7 +125,11 @@ SDL_AppResult SDL_AppInit(void** appstate, int argc, char* argv[]) {
 		&renderer
 	);
 
-	//menu = new Menu(renderer);
+	background = new TextureObj(
+		{ 0, 0, 1000, 800 },
+		IMG_LoadTexture(renderer, "assets\\menu\\background.png")
+	);
+
 
 	return SDL_APP_CONTINUE;
 }
@@ -171,6 +138,7 @@ SDL_AppResult SDL_AppIterate(void* appstate) {
 	SDL_SetRenderDrawColor(renderer, 30, 30, 30, 255);
 	SDL_RenderClear(renderer);
 
+	background->render(renderer);
 	// menu->renderMenu();
 
 	SDL_RenderPresent(renderer);
