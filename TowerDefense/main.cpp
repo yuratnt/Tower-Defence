@@ -3,7 +3,6 @@
 #include <SDL3/SDL_main.h>
 #include <SDL3_image/SDL_image.h>
 #include <iostream>
-#include <vector>
 
 static SDL_Window* window;
 static SDL_Renderer* renderer;
@@ -52,7 +51,7 @@ public:
 	}
 };
 
-class Menu  {
+class Menu {
 protected:
 	/*
 	SDL_Texture* background;
@@ -64,11 +63,18 @@ protected:
 	SDL_FRect saveButton;
 	SDL_FRect exitButton;
 	*/
-	TextureObj interface;
+	TextureObj* interface;
 	Button* button;
+	int buttonCount;
 public:
-	Menu() {
-
+	Menu(
+		TextureObj _interface,
+		Button* _button,
+		int _buttonCount
+	) {
+		interface = &_interface;
+		button = _button;
+		buttonCount = _buttonCount;
 	}
 
 	void render() {
